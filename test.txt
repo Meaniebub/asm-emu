@@ -1,0 +1,3 @@
+Tester document
+assembler fast
+emulator slow
