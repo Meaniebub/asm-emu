@@ -1,8 +1,8 @@
 #define MAXSIZE 500;
 
 typedef struct{
-    int* key;
-    int* value;
+    char* key;
+    int value;
 }entry;
 
 typedef struct{
@@ -13,16 +13,16 @@ typedef struct{
 
 unsigned long hash(const char *str);
 
-void ht_insert(hashtable* ht, const char* key, int* value);
+static entry* new_entry(const char* k, int v);
 
-char* ht_search(hashtable* ht, const char* key);
+void ht_insert(hashtable* ht, const char* key, int value);
+
+int ht_search(hashtable* ht, const char* key);
 
 void ht_delete(hashtable* h, const char* key);
 
 static void del_entry(entry * i);
 
 hashtable* new_hashtable();
-
-static void del_entry(entry * i);
 
 void del_hashtable(hashtable* ht);

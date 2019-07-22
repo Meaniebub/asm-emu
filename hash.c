@@ -1,3 +1,4 @@
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -10,13 +11,13 @@ unsigned long hash(const char *str){
     while (c = *str++)
         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 
-    return hash;
+    return hash % MAXSIZE;
 }
 
-static entry* new_entry(const char* k, int* v){
+static entry* new_entry(const char* k, int v){
     entry* i = malloc(sizeof(entry));
 
-    i -> key = hash(k);
+    i -> key = strdup(k);
     i -> value = v;
 
     return i;
@@ -31,9 +32,8 @@ hashtable* new_hashtable(){
     return ht;
 }
 
-static void del_entry(entry * i){
+void del_entry(entry * i){
     free(i -> key);
-    free(i -> value);
     free(i);
 }
 
@@ -48,9 +48,19 @@ void del_hashtable(hashtable* ht){
     free(ht);
 }
 
-void ht_insert(hashtable* ht, const char* key, int* value){
+void ht_insert(hashtable* ht, const char* key, int value){
     int index = hash(key);
     entry* entry = new_entry(key, value);
-
     ht -> items[index] = entry;
+}
+
+int ht_search(hashtable* ht, const char* key){
+  int index = hash(key);
+  entry* entry = ht -> items[index];
+
+  if (entry) {
+    return entry -> value;
+  }
+
+  return -1;
 }

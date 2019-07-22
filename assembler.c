@@ -7,10 +7,10 @@ int main(int argc, char const *argv[]) {
     char ch;
     FILE *fp;
 
-    fp = fopen("C:\\Users\\prate\\CProjects\\asm-emu\\test.txt", "r");
+    fp = fopen("C:\\Users\\zbjb8f\\CProjects\\assembler\\test.txt", "r");
 
     if (!fp) {
-      printf("Invalid filepath\n");
+      printf("Couldn't find opcode table\n");
       return 1;
     }
 
@@ -22,11 +22,14 @@ int main(int argc, char const *argv[]) {
         printf("%c", ch);
     }
 
-    printf("hello");
-    int x = 1010;
+    int x = 0xFF;
 
     hashtable *ht = new_hashtable();
-    ht_insert(ht, "ADD", &x);
+    ht_insert(ht, "ADD", x);
+
+    int result = ht_search(ht, "ADD");
+    printf("\n%d\n", result);
+    del_hashtable(ht);
 
     return 0;
 }
