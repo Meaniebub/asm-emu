@@ -30,6 +30,7 @@ int main(int argc, char const *argv[]) {
     int result = ht_search(ht, "ADD");
     printf("\n%d\n", result);
     del_hashtable(ht);
+    fclose(fp);
 
     return 0;
 }
