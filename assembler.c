@@ -6,11 +6,10 @@
 #define MAXCHAR 15
 
 int main(int argc, char const *argv[]) {
-    char ch;
     FILE *fp;
+    char ch;
     hashtable *ht = new_hashtable();
     char str[MAXCHAR];
-    char * token;
 
     fp = fopen("opcode.txt", "r");
 
@@ -33,11 +32,25 @@ int main(int argc, char const *argv[]) {
 
         ht_insert(ht, array[0], (int)strtol(array[1], NULL, 0));
     }
-
-    printf("0x%X\n", ht_search(ht, "pushq"));
-
-    del_hashtable(ht);
     fclose(fp);
 
+    fp = fopen("test.asm", "r");
+
+    if (!fp) {
+        printf("Couldn't find y86 assembly source\n");
+        return 1;
+    }
+
+    while(1)
+     {
+        ch = fgetc(fp);
+        if(ch == EOF)
+            break;
+        else
+            printf("%c", ch);
+     }
+
+    fclose(fp);
+    del_hashtable(ht);
     return 0;
 }
