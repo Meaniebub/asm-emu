@@ -1,34 +1,41 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "hash.h"
+#define MAXCHAR 15
 
 int main(int argc, char const *argv[]) {
     char ch;
     FILE *fp;
+    hashtable *ht = new_hashtable();
+    char str[MAXCHAR];
+    char * token;
 
-    fp = fopen("C:\\Users\\prate\\CProjects\\asm-emu\\opcode.txt", "r");
+    fp = fopen("opcode.txt", "r");
 
     if (!fp) {
-      printf("Couldn't find opcode table\n");
-      return 1;
+        printf("Couldn't find opcode table\n");
+        return 1;
     }
 
-    while (1) {
-        ch = fgetc(fp);
-        if (feof(fp)){
-            break;
+    while (fgets(str, MAXCHAR, fp) != NULL){
+        strtok(str, "\n");
+        char* token = strtok(str, " ");
+        char* array[2];
+        int i = 0;
+        array[i] = token;
+
+        while (token){
+            array[i+1] = token;
+            token = strtok(NULL, " ");
         }
-        printf("%c", ch);
+
+        ht_insert(ht, array[0], (int)strtol(array[1], NULL, 0));
     }
 
-    int x = 0xFF;
+    printf("0x%x\n", ht_search(ht, "jg"));
 
-    hashtable *ht = new_hashtable();
-    ht_insert(ht, "ADD", x);
-
-    int result = ht_search(ht, "ADD");
-    printf("\n0x%X\n", result);
     del_hashtable(ht);
     fclose(fp);
 
