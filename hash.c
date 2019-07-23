@@ -51,7 +51,12 @@ void del_hashtable(hashtable* ht){
 void ht_insert(hashtable* ht, const char* key, int value){
     int index = hash(key);
     entry* entry = new_entry(key, value);
-    ht -> items[index] = entry;
+    if (ht -> items[index] == NULL) {
+        ht -> items[index] = entry;
+    }
+    else{
+        printf("Collision detected, %s, %i\n", key, index);
+    }
 }
 
 int ht_search(hashtable* ht, const char* key){

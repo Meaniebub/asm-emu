@@ -27,14 +27,14 @@ int main(int argc, char const *argv[]) {
         array[i] = token;
 
         while (token){
-            array[i+1] = token;
+            array[i++] = token;
             token = strtok(NULL, " ");
         }
 
         ht_insert(ht, array[0], (int)strtol(array[1], NULL, 0));
     }
 
-    printf("0x%x\n", ht_search(ht, "jg"));
+    printf("0x%X\n", ht_search(ht, "pushq"));
 
     del_hashtable(ht);
     fclose(fp);
