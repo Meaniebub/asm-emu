@@ -7,7 +7,7 @@ int main(int argc, char const *argv[]) {
     char ch;
     FILE *fp;
 
-    fp = fopen("C:\\Users\\zbjb8f\\CProjects\\assembler\\test.txt", "r");
+    fp = fopen("C:\\Users\\prate\\CProjects\\asm-emu\\opcode.txt", "r");
 
     if (!fp) {
       printf("Couldn't find opcode table\n");
@@ -28,7 +28,7 @@ int main(int argc, char const *argv[]) {
     ht_insert(ht, "ADD", x);
 
     int result = ht_search(ht, "ADD");
-    printf("\n%d\n", result);
+    printf("\n0x%X\n", result);
     del_hashtable(ht);
     fclose(fp);
 
