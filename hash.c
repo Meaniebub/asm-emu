@@ -59,11 +59,11 @@ void ht_insert(hashtable* ht, const char* key, int value){
     }
 }
 
-int ht_search(hashtable* ht, const char* key){
-  int index = hash(key);
+int ht_search(hashtable* ht, const char* key1){
+  int index = hash(key1);
   entry* entry = ht -> items[index];
 
-  if (entry) {
+  if (entry && strcmp(entry -> key, key1) == 0) {
     return entry -> value;
   }
 

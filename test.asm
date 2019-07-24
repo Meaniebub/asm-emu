@@ -25,8 +25,8 @@ sum:
 loop:
     mrmovq (%rdi),%r10
     addq %r10,%rax
-    addq %r8,%rd1
-    subq %r9,rsi
+    addq %r8,%rdi
+    subq %r9,%rsi
 test:
     jne loop
     ret

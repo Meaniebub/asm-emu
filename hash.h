@@ -1,4 +1,4 @@
-#define MAXSIZE 313;
+#define MAXSIZE 521;
 
 typedef struct{
     char* key;
