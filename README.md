@@ -9,3 +9,10 @@ In the assembler's first pass, it checks for symbols/labels, storing them in a s
 
 In the assembler's second pass, it generates object code by converting assembly language mnemonics into machine code, and resolves symbols checked in the first pass. Finally, it writes out the generated code to an .oy file.
 ## Emulator
+
+TODO:
+
+1. Fix irmovq - add F
+2. Fix loc_counter
+3. literal support
+4. fix buffer_check
