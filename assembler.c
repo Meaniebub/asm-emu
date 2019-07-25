@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
+#include <ctype.h>
 
 #include "hash.h"
 #define MAXCHAR 30
@@ -9,6 +11,7 @@ void buffer_check();
 int length_check(int opcode);
 
 int main(int argc, char const *argv[]) {
+    clock_t start = clock();
     FILE *fp;
     hashtable *ht = new_hashtable();
     char str[MAXCHAR];
@@ -56,9 +59,9 @@ int main(int argc, char const *argv[]) {
             if (result != -1 && final_pass) {
                 printf("%X ", result);
             }
-            else if(result != -1 && !final_pass){
-                printf("%i\n", length_check(result));
-                loc_counter += 5;
+            else if(result != -1 && !final_pass && buffer[0] != '%'){
+                loc_counter += length_check(result);
+                printf("%X\n", loc_counter);
             }
             else if (result == -1 && final_pass) {
                 int symbol = ht_search(st, buffer);
@@ -73,9 +76,26 @@ int main(int argc, char const *argv[]) {
 
     do {
         ch = fgetc(fp);
+        char *p = buffer;
         switch (ch) {
             case ':':
                 ht_insert(st, buffer, loc_counter);
+                printf("%s, %X\n", buffer, loc_counter);
+                break;
+            case '.':
+                fgets(buffer, 20, fp);
+                switch (buffer[0]) {
+                    case 'p':
+                     do{
+                        if (isdigit(*p) || ( (*p=='-'||*p=='+') && isdigit(*(p+1)) )) {
+                            long val = strtol(p, &p, 10);
+                            printf("%ld\n", val);
+                        }
+                        else{
+                            p++;
+                        }
+                    }while (*p);
+                }
                 break;
             case '\t':
                 break;
@@ -84,7 +104,6 @@ int main(int argc, char const *argv[]) {
                 break;
             case '\n':
                 buffer_check(0);
-                printf("\n");
                 break;
             case ',':
                 buffer_check(0);
@@ -94,8 +113,7 @@ int main(int argc, char const *argv[]) {
         }
     } while(ch != EOF);
 
-    fclose(fp);
-    fp = fopen("test.asm", "r");
+    rewind(fp);
 
     do{
         ch = fgetc(fp);
@@ -119,12 +137,18 @@ int main(int argc, char const *argv[]) {
 
     fclose(fp);
     del_hashtable(ht);
+    del_hashtable(st);
+
+    clock_t stop = clock();
+    double elapsed = (double)(stop - start) * 1000.0 / CLOCKS_PER_SEC;
+    printf("Assembly finished in ms: %f", elapsed);
+
     return 0;
 }
 
 int length_check(int opcode){
-    char* temp;
-    itoa(opcode, temp, 16);
+    char temp[5];
+    sprintf(temp, "%x", opcode);
     unsigned char c = temp[0];
 
     if (c == '0' || c == '1' || c == '9') {
@@ -138,5 +162,8 @@ int length_check(int opcode){
     }
     else if(c == '2' || c == '6' || c == 'A' || c == 'B'){
         return 4;
+    }
+    else{
+        return 0;
     }
 }
