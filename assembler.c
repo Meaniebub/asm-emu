@@ -52,27 +52,6 @@ int main(int argc, char const *argv[]) {
     char buffer[MAXCHAR];
     hashtable* st = new_hashtable();
 
-    void buffer_check(int final_pass){
-        if (buffer[0] != 0) {
-            buffer[index++] = '\0';
-            int result = ht_search(ht, buffer);
-            if (result != -1 && final_pass) {
-                printf("%X ", result);
-            }
-            else if(result != -1 && !final_pass && buffer[0] != '%'){
-                loc_counter += length_check(result);
-                printf("%X\n", loc_counter);
-            }
-            else if (result == -1 && final_pass) {
-                int symbol = ht_search(st, buffer);
-                if (symbol != -1) {
-                    printf("%X ", symbol);
-                }
-            }
-        }
-        memset(buffer, 0, sizeof(buffer));
-        index = 0;
-    }
 
     do {
         ch = fgetc(fp);
@@ -82,31 +61,31 @@ int main(int argc, char const *argv[]) {
                 ht_insert(st, buffer, loc_counter);
                 printf("%s, %X\n", buffer, loc_counter);
                 break;
-            case '.':
-                fgets(buffer, 20, fp);
-                switch (buffer[0]) {
-                    case 'p':
-                     do{
-                        if (isdigit(*p) || ( (*p=='-'||*p=='+') && isdigit(*(p+1)) )) {
-                            long val = strtol(p, &p, 10);
-                            printf("%ld\n", val);
-                        }
-                        else{
-                            p++;
-                        }
-                    }while (*p);
-                }
-                break;
+            // case '.':
+            //     fgets(buffer, 20, fp);
+            //     switch (buffer[0]) {
+            //         case 'p':
+            //          do{
+            //             if (isdigit(*p) || ( (*p=='-'||*p=='+') && isdigit(*(p+1)) )) {
+            //                 long val = strtol(p, &p, 10);
+            //                 printf("%ld\n", val);
+            //             }
+            //             else{
+            //                 p++;
+            //             }
+            //         }while (*p);
+            //     }
+            //     break;
             case '\t':
                 break;
             case ' ':
-                buffer_check(0);
+                buffer_check(buffer, &index, &loc_counter, 0, ht, st);
                 break;
             case '\n':
-                buffer_check(0);
+                buffer_check(buffer, &index, &loc_counter, 0, ht, st);
                 break;
             case ',':
-                buffer_check(0);
+                buffer_check(buffer, &index, &loc_counter, 0, ht, st);
                 break;
             default:
                 buffer[index++] = ch;
@@ -121,14 +100,14 @@ int main(int argc, char const *argv[]) {
             case '\t':
                 break;
             case ' ':
-                buffer_check(1);
+                buffer_check(buffer, &index, &loc_counter, 1, ht, st);
                 break;
             case '\n':
-                buffer_check(1);
+                buffer_check(buffer, &index, &loc_counter, 1, ht, st);
                 printf("\n");
                 break;
             case ',':
-                buffer_check(1);
+                buffer_check(buffer, &index, &loc_counter, 1, ht, st);
                 break;
             default:
                 buffer[index++] = ch;
@@ -167,3 +146,25 @@ int length_check(int opcode){
         return 0;
     }
 }
+
+void buffer_check(char buffer[], int* index, int* loc_counter, int final_pass, hashtable* ht, hashtable* st){
+        if (buffer[0] != 0) {
+            buffer[(*index)++] = '\0';
+            int result = ht_search(ht, buffer);
+            if (result != -1 && final_pass) {
+                printf("%X ", result);
+            }
+            else if(result != -1 && !final_pass && buffer[0] != '%'){
+                (*loc_counter) += length_check(result);
+                printf("%X\n", (*loc_counter));
+            }
+            else if (result == -1 && final_pass) {
+                int symbol = ht_search(st, buffer);
+                if (symbol != -1) {
+                    printf("%X ", symbol);
+                }
+            }
+        }
+        memset(buffer, 0, strlen(buffer));
+        (*index) = 0;
+    }
