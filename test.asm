@@ -1,4 +1,4 @@
-    .pos 0
+    .pos 0x0
     irmovq stack %,rsp
     call main
     halt

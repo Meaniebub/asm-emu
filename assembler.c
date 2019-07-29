@@ -9,6 +9,7 @@
 
 void buffer_check();
 int length_check(int opcode);
+char* get_dir(char* buffer, char* dir_number, int* i);
 
 int main(int argc, char const *argv[]) {
     clock_t start = clock();
@@ -62,20 +63,12 @@ int main(int argc, char const *argv[]) {
             case '.':
                 fgets(buffer, 20, fp);
                 int i = 0;
-                char dir_number[16];
+                char dir_number[MAXCHAR];
                 switch (buffer[0]) {
                     case 'p':
-                        do{
-                            if (buffer[i] == '0' && (buffer[i+1] == 'x' || buffer[i+1] == 'X'))
-                            {
-                                int j = 0;
-                                while (buffer[i] == ' ' ||buffer[i] == '\n')
-                                {
-                                    dir_number[j] = buffer[i];
-                                    j++;
-                                    i++;
-                                }
-                                printf("0x%x ", atoi(dir_number));
+                        while (buffer[i] != '\n'){
+                            if (buffer[i] == '0' && (buffer[i+1] == 'x' || buffer[i+1] == 'X')){
+                                printf("pos %s\n", get_dir(buffer, dir_number, &i));
                                 break;
                             }
                             else if(buffer[i] == '\n'){
@@ -85,18 +78,42 @@ int main(int argc, char const *argv[]) {
                             else{
                                 i++;
                             }
-                        }while (buffer[i] != '\n');
-                      break;  
+                        }
+                        break;
                     case 'a':
-                        printf("found align\n");
+                        while (buffer[i] != '\n') {
+                            if (isdigit(buffer[i])) {
+                                printf("align %s\n", get_dir(buffer, dir_number, &i));
+                                break;
+                            }
+                            else if(buffer[i] == '\n'){
+                                printf("Error: invalid directive argument\n");
+                                return 1;
+                            }
+                            else{
+                                i++;
+                            }
+                        }
                         break;
                     case 'q':
-                        printf("found quad\n");
-                        break;
-                    default:
-                        printf("Error: Invalid directive encountered\n");
-                        return 1;
-                }
+                        while (buffer[i] != '\n'){
+                            if (buffer[i] == '0' && (buffer[i+1] == 'x' || buffer[i+1] == 'X')){
+                                printf("quad %s\n", get_dir(buffer, dir_number, &i));
+                                break;
+                            }
+                            else if(buffer[i] == '\n'){
+                                printf("Error: invalid directive argument\n");
+                                return 1;
+                            }
+                            else{
+                                i++;
+                            }
+                        }
+                        default:
+                            printf("Error: Invalid directive encountered\n");
+                            return 1;
+                    }
+                    break;
                 break;
             case '\t':
                 break;
@@ -169,24 +186,36 @@ int length_check(int opcode){
     }
 }
 
+char* get_dir(char buffer[], char dir_number[], int* i){
+    int j = 0;
+    while (buffer[(*i)] != ' ' && buffer[(*i)] != '\n'){
+        dir_number[j] = buffer[(*i)];
+        j++;
+        (*i)++;
+        dir_number[j] = '\0';
+        printf("%s\n", dir_number);
+    }
+    return dir_number;
+}
+
 void buffer_check(char buffer[], int* index, int* loc_counter, int final_pass, hashtable* ht, hashtable* st){
-        if (buffer[0] != 0) {
-            buffer[(*index)++] = '\0';
-            int result = ht_search(ht, buffer);
-            if (result != -1 && final_pass) {
-                //printf("%X ", result);
-            }
-            else if(result != -1 && !final_pass && buffer[0] != '%'){
-                (*loc_counter) += length_check(result);
-               // printf("%X\n", (*loc_counter));
-            }
-            else if (result == -1 && final_pass) {
-                int symbol = ht_search(st, buffer);
-                if (symbol != -1) {
-                   // printf("%X ", symbol);
-                }
+    if (buffer[0] != 0) {
+        buffer[(*index)++] = '\0';
+        int result = ht_search(ht, buffer);
+        if (result != -1 && final_pass) {
+            //printf("%X ", result);
+        }
+        else if(result != -1 && !final_pass && buffer[0] != '%'){
+            (*loc_counter) += length_check(result);
+           // printf("%X\n", (*loc_counter));
+        }
+        else if (result == -1 && final_pass) {
+            int symbol = ht_search(st, buffer);
+            if (symbol != -1) {
+               // printf("%X ", symbol);
             }
         }
-        memset(buffer, 0, strlen(buffer));
-        (*index) = 0;
     }
+    memset(buffer, 0, strlen(buffer));
+    (*index) = 0;
+}
