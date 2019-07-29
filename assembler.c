@@ -52,30 +52,52 @@ int main(int argc, char const *argv[]) {
     char buffer[MAXCHAR];
     hashtable* st = new_hashtable();
 
-
     do {
         ch = fgetc(fp);
-        char *p = buffer;
         switch (ch) {
             case ':':
                 ht_insert(st, buffer, loc_counter);
-                printf("%s, %X\n", buffer, loc_counter);
+                //printf("%s, %X\n", buffer, loc_counter);
                 break;
-            // case '.':
-            //     fgets(buffer, 20, fp);
-            //     switch (buffer[0]) {
-            //         case 'p':
-            //          do{
-            //             if (isdigit(*p) || ( (*p=='-'||*p=='+') && isdigit(*(p+1)) )) {
-            //                 long val = strtol(p, &p, 10);
-            //                 printf("%ld\n", val);
-            //             }
-            //             else{
-            //                 p++;
-            //             }
-            //         }while (*p);
-            //     }
-            //     break;
+            case '.':
+                fgets(buffer, 20, fp);
+                int i = 0;
+                char dir_number[16];
+                switch (buffer[0]) {
+                    case 'p':
+                        do{
+                            if (buffer[i] == '0' && (buffer[i+1] == 'x' || buffer[i+1] == 'X'))
+                            {
+                                int j = 0;
+                                while (buffer[i] == ' ' ||buffer[i] == '\n')
+                                {
+                                    dir_number[j] = buffer[i];
+                                    j++;
+                                    i++;
+                                }
+                                printf("0x%x ", atoi(dir_number));
+                                break;
+                            }
+                            else if(buffer[i] == '\n'){
+                                printf("Error: invalid directive argument\n");
+                                return 1;
+                            }
+                            else{
+                                i++;
+                            }
+                        }while (buffer[i] != '\n');
+                      break;  
+                    case 'a':
+                        printf("found align\n");
+                        break;
+                    case 'q':
+                        printf("found quad\n");
+                        break;
+                    default:
+                        printf("Error: Invalid directive encountered\n");
+                        return 1;
+                }
+                break;
             case '\t':
                 break;
             case ' ':
@@ -104,7 +126,7 @@ int main(int argc, char const *argv[]) {
                 break;
             case '\n':
                 buffer_check(buffer, &index, &loc_counter, 1, ht, st);
-                printf("\n");
+                //printf("\n");
                 break;
             case ',':
                 buffer_check(buffer, &index, &loc_counter, 1, ht, st);
@@ -152,16 +174,16 @@ void buffer_check(char buffer[], int* index, int* loc_counter, int final_pass, h
             buffer[(*index)++] = '\0';
             int result = ht_search(ht, buffer);
             if (result != -1 && final_pass) {
-                printf("%X ", result);
+                //printf("%X ", result);
             }
             else if(result != -1 && !final_pass && buffer[0] != '%'){
                 (*loc_counter) += length_check(result);
-                printf("%X\n", (*loc_counter));
+               // printf("%X\n", (*loc_counter));
             }
             else if (result == -1 && final_pass) {
                 int symbol = ht_search(st, buffer);
                 if (symbol != -1) {
-                    printf("%X ", symbol);
+                   // printf("%X ", symbol);
                 }
             }
         }

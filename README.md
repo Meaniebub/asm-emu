@@ -14,5 +14,6 @@ TODO:
 
 1. Fix irmovq - add F
 2. Fix loc_counter
-3. literal support
+3. immediate support
 4. fix buffer_check
+5. length_check pushq & popq
