@@ -56,16 +56,48 @@ void ht_insert(hashtable* ht, const char* key, int value){
     }
     else{
         printf("Collision detected, %s, %i\n", key, index);
+        while (ht -> items[index] != NULL) {
+            switch (index){
+            case MAXSIZE:
+                index = 0;
+                break;
+            default:
+                index++;
+                break;
+            }
+            if (ht -> items[index] == NULL) {
+                ht -> items[index] = entry;
+                printf("Collision resolved, %s, %i\n", key, index);
+                break;
+            }
+        }
     }
 }
 
 int ht_search(hashtable* ht, const char* key1){
-  int index = hash(key1);
-  entry* entry = ht -> items[index];
+    int index = hash(key1);
+    entry* entry = ht -> items[index];
 
-  if (entry && strcmp(entry -> key, key1) == 0) {
-    return entry -> value;
-  }
-
-  return -1;
+    if (entry) {
+        if (strcmp(entry -> key, key1) == 0){
+            return entry -> value;
+        }
+        else if (ht -> items[index + 1] != NULL){
+            while (ht -> items[index] != NULL) {
+                switch (index){
+                case MAXSIZE:
+                    index = 0;
+                    break;
+                default:
+                    index++;
+                    break;
+                }
+                entry = ht -> items[index];
+                if (strcmp(entry -> key, key1) == 0){
+                    return entry -> value;
+                }  
+            }   
+        }   
+    }
+    return -1;
 }

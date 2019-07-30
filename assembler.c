@@ -58,7 +58,7 @@ int main(int argc, char const *argv[]) {
         switch (ch) {
             case ':':
                 ht_insert(st, buffer, loc_counter);
-                //printf("%s, %X\n", buffer, loc_counter);
+                printf("%s, %X\n", buffer, loc_counter);
                 break;
             case '.':
                 fgets(buffer, 20, fp);
@@ -109,9 +109,6 @@ int main(int argc, char const *argv[]) {
                                 i++;
                             }
                         }
-                        default:
-                            printf("Error: Invalid directive encountered\n");
-                            return 1;
                     }
                     break;
                 break;
@@ -193,8 +190,8 @@ char* get_dir(char buffer[], char dir_number[], int* i){
         j++;
         (*i)++;
         dir_number[j] = '\0';
-        printf("%s\n", dir_number);
     }
+    memset(buffer, 0, strlen(buffer));
     return dir_number;
 }
 
@@ -203,16 +200,16 @@ void buffer_check(char buffer[], int* index, int* loc_counter, int final_pass, h
         buffer[(*index)++] = '\0';
         int result = ht_search(ht, buffer);
         if (result != -1 && final_pass) {
-            //printf("%X ", result);
+            printf("%X ", result);
         }
         else if(result != -1 && !final_pass && buffer[0] != '%'){
             (*loc_counter) += length_check(result);
-           // printf("%X\n", (*loc_counter));
+            printf("%X\n", (*loc_counter));
         }
         else if (result == -1 && final_pass) {
             int symbol = ht_search(st, buffer);
             if (symbol != -1) {
-               // printf("%X ", symbol);
+                printf("%X ", symbol);
             }
         }
     }
