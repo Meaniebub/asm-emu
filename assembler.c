@@ -61,7 +61,7 @@ int main(int argc, char const *argv[]) {
                 printf("%s, %X\n", buffer, loc_counter);
                 break;
             case '.':
-                fgets(buffer, 20, fp);
+                fgets(buffer, MAXCHAR, fp);
                 int i = 0;
                 char dir_number[MAXCHAR];
                 switch (buffer[0]) {
@@ -140,7 +140,7 @@ int main(int argc, char const *argv[]) {
                 break;
             case '\n':
                 buffer_check(buffer, &index, &loc_counter, 1, ht, st);
-                //printf("\n");
+                printf("\n");
                 break;
             case ',':
                 buffer_check(buffer, &index, &loc_counter, 1, ht, st);
