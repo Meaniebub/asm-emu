@@ -14,7 +14,7 @@ unsigned long hash(const char *str){
     return hash % MAXSIZE;
 }
 
-static entry* new_entry(const char* k, int v){
+entry* new_entry(const char* k, int v){
     entry* i = malloc(sizeof(entry));
 
     i -> key = strdup(k);

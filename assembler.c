@@ -27,7 +27,7 @@ int main(int argc, char const *argv[]) {
     while (fgets(str, MAXCHAR, fp) != NULL){
         strtok(str, "\n");
         char* token = strtok(str, " ");
-        char* array[2];
+        char* array[3];
         int i = 0;
         array[i] = token;
 
@@ -57,8 +57,9 @@ int main(int argc, char const *argv[]) {
         ch = fgetc(fp);
         switch (ch) {
             case ':':
+                buffer[index++] == '\0';
                 ht_insert(st, buffer, loc_counter);
-                //printf("%s, %X\n", buffer, loc_counter);
+                printf("%s, %X\n", buffer, loc_counter);
                 break;
             case '\t':
                 break;
@@ -178,7 +179,7 @@ void buffer_check(char buffer[], int* index, int* loc_counter,
         }
         else if(result != -1 && !final_pass && buffer[0] != '%'){
             (*loc_counter) += length_check(result);
-            //printf("%X\n", (*loc_counter));
+            printf("%X\n", (*loc_counter));
         }
         else if (result == -1 && final_pass) {
             int symbol = ht_search(st, buffer);
