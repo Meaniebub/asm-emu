@@ -1,2 +1,7 @@
+CFLAGS = -I -Wall.
+
 asm: assembler.c hash.c
-	gcc -o asm assembler.c hash.c -I -Wall -g
+	gcc -o asm assembler.c hash.c $(CFLAGS)
+
+clean:
+	cmd //C del asm.exe

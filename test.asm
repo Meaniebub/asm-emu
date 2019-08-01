@@ -23,7 +23,7 @@ sum:
     andq %rsi,%rsi
     jmp test
 loop:
-    mrmovq (%rdi),%r10
+    mrmovq 0x12(%rdi),%r10
     addq %r10,%rax
     addq %r8,%rdi
     subq %r9,%rsi

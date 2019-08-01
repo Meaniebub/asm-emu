@@ -10,12 +10,12 @@
 void buffer_check();
 int length_check(int opcode);
 char* get_dir(char* buffer, char* dir_number, int* i);
-FILE *fp;
 
 int main(int argc, char const *argv[]) {
     clock_t start = clock();
     hashtable *ht = new_hashtable();
     char str[MAXCHAR];
+    FILE *fp;
 
     fp = fopen("opcode.txt", "r");
 
@@ -57,20 +57,47 @@ int main(int argc, char const *argv[]) {
         ch = fgetc(fp);
         switch (ch) {
             case ':':
-                buffer[index++] == '\0';
+                buffer[index++] = '\0';
                 ht_insert(st, buffer, loc_counter);
                 printf("%s, %X\n", buffer, loc_counter);
                 break;
             case '\t':
                 break;
             case ' ':
-                buffer_check(buffer, &index, &loc_counter, 0, ht, st);
+                buffer_check(buffer, &index, &loc_counter, 0, ht, st, fp);
                 break;
             case '\n':
-                buffer_check(buffer, &index, &loc_counter, 0, ht, st);
+                buffer_check(buffer, &index, &loc_counter, 0, ht, st, fp);
                 break;
             case ',':
-                buffer_check(buffer, &index, &loc_counter, 0, ht, st);
+                if (buffer[0] == '$') {
+                    char num[17];
+                    for (int i = 0; i < strlen(buffer); i++) {
+                        num[i] = buffer[i+1];
+                    }
+                    ht_insert(st, buffer, strtol(num, NULL, 16));
+                }
+                buffer_check(buffer, &index, &loc_counter, 0, ht, st, fp);
+                break;
+            case '(':
+                if (buffer[0] != '\0') {
+                    char num[17];
+                    buffer[index++] = '\0';
+                    if (buffer[0] == '0' && (buffer[1] == 'x' || buffer[1] == 'X')) {
+                        for (int i = 0; i < strlen(buffer); i++) {
+                            num[i] = buffer[i];
+                        }
+                    }
+                    else{
+                        for (int i = 0; i < strlen(buffer); i++) {
+                            num[i] = buffer[i];
+                        }
+                    }
+                    printf("%s\n", num);
+                    int value = strtol(num, NULL, 16);
+                    printf("%x\n", value);
+                    ht_insert(st, buffer, value);
+                }
                 break;
             default:
                 buffer[index++] = ch;
@@ -85,14 +112,17 @@ int main(int argc, char const *argv[]) {
             case '\t':
                 break;
             case ' ':
-                buffer_check(buffer, &index, &loc_counter, 1, ht, st);
+                buffer_check(buffer, &index, &loc_counter, 1, ht, st, fp);
                 break;
             case '\n':
-                buffer_check(buffer, &index, &loc_counter, 1, ht, st);
+                buffer_check(buffer, &index, &loc_counter, 1, ht, st, fp);
                 printf("\n");
                 break;
             case ',':
-                buffer_check(buffer, &index, &loc_counter, 1, ht, st);
+                buffer_check(buffer, &index, &loc_counter, 1, ht, st, fp);
+                break;
+            case '(':
+                buffer_check(buffer, &index, &loc_counter, 1, ht, st, fp);
                 break;
             default:
                 buffer[index++] = ch;
@@ -145,7 +175,7 @@ char* get_dir(char buffer[], char dir_number[], int* i){
 }
 
 void buffer_check(char buffer[], int* index, int* loc_counter,
-    int final_pass, hashtable* ht, hashtable* st){
+    int final_pass, hashtable* ht, hashtable* st, FILE* fp){
     if (buffer[0] != 0) {
         buffer[(*index)++] = '\0';
         int result = ht_search(ht, buffer);
