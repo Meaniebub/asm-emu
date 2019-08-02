@@ -3,6 +3,7 @@
 #include <string.h>
 #include <time.h>
 #include <ctype.h>
+#include <limits.h>
 
 #include "hash.h"
 #define MAXCHAR 30
@@ -10,6 +11,7 @@
 void buffer_check();
 int length_check(int opcode);
 char* get_dir(char* buffer, char* dir_number, int* i);
+void error_close_memory(FILE* fp, hashtable* ht, hashtable* st);
 
 int main(int argc, char const *argv[]) {
     clock_t start = clock();
@@ -44,6 +46,7 @@ int main(int argc, char const *argv[]) {
 
     if (!fp) {
         printf("Couldn't find source code\n");
+        del_hashtable(ht);
         return 1;
     }
 
@@ -83,19 +86,17 @@ int main(int argc, char const *argv[]) {
                 if (buffer[0] != '\0') {
                     char num[17];
                     buffer[index++] = '\0';
-                    if (buffer[0] == '0' && (buffer[1] == 'x' || buffer[1] == 'X')) {
-                        for (int i = 0; i < strlen(buffer); i++) {
-                            num[i] = buffer[i];
-                        }
+
+                    for (int i = 0; i < strlen(buffer); i++) {
+                        num[i] = buffer[i];
                     }
-                    else{
-                        for (int i = 0; i < strlen(buffer); i++) {
-                            num[i] = buffer[i];
-                        }
+
+                    int value = strtol(num, NULL, 0);
+                    if (value == 0 || value == LONG_MAX || value == LONG_MIN){
+                        printf("Error: Invalid mrmovq/rmmovq destination\n");
+                        error_close_memory(fp, ht, st);
+                        return 1;
                     }
-                    printf("%s\n", num);
-                    int value = strtol(num, NULL, 16);
-                    printf("%x\n", value);
                     ht_insert(st, buffer, value);
                 }
                 break;
@@ -172,6 +173,12 @@ char* get_dir(char buffer[], char dir_number[], int* i){
     }
     memset(buffer, 0, strlen(buffer));
     return dir_number;
+}
+
+void error_close_memory(FILE* fp, hashtable* ht, hashtable* st){
+    fclose(fp);
+    del_hashtable(ht);
+    del_hashtable(st);
 }
 
 void buffer_check(char buffer[], int* index, int* loc_counter,
