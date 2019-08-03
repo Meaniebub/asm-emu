@@ -1,4 +1,4 @@
-CFLAGS = -Wall
+CFLAGS = -Wall -g
 
 asm: assembler.c hash.c
 	gcc -o asm assembler.c hash.c $(CFLAGS)

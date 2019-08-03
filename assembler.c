@@ -79,6 +79,7 @@ int main(int argc, char const *argv[]) {
                         num[i] = buffer[i+1];
                     }
                     ht_insert(st, buffer, strtol(num, NULL, 16));
+                    printf(" %s\n", num);
                 }
                 buffer_check(buffer, &index, &loc_counter, 0, ht, st, fp);
                 break;
@@ -206,7 +207,7 @@ void buffer_check(char buffer[], int* index, int* loc_counter,
                     get_dir(buffer, dir_number, &i);
                     value = strtol(dir_number, NULL, 16);
                     if ((*loc_counter) % value != 0) {
-                        (*loc_counter) += ((*loc_counter) % value);
+                        (*loc_counter) += (value - ((*loc_counter) % value));
                     }
                     break;
             }
