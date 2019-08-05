@@ -52,7 +52,7 @@ int main(int argc, char const *argv[]) {
 
     int index = 0;
     int loc_counter = 0;
-    char ch;
+    char ch = 0;
     char buffer[MAXCHAR];
     hashtable* st = new_hashtable();
 
@@ -79,7 +79,6 @@ int main(int argc, char const *argv[]) {
                         num[i] = buffer[i+1];
                     }
                     ht_insert(st, buffer, strtol(num, NULL, 16));
-                    printf(" %s\n", num);
                 }
                 buffer_check(buffer, &index, &loc_counter, 0, ht, st, fp);
                 break;
@@ -137,7 +136,7 @@ int main(int argc, char const *argv[]) {
 
     clock_t stop = clock();
     double elapsed = (double)(stop - start) * 1000.0 / CLOCKS_PER_SEC;
-    printf("Assembly finished in ms: %f", elapsed);
+    printf("Assembly finished in ms: %f\n", elapsed);
 
     return 0;
 }

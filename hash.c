@@ -78,12 +78,16 @@ int ht_search(hashtable* ht, const char* key1){
     int index = hash(key1);
     entry* entry = ht -> items[index];
 
-    if (entry) {
+    if (entry != NULL) {
         if (strcmp(entry -> key, key1) == 0){
             return entry -> value;
         }
         else if (ht -> items[index + 1] != NULL){
             while (ht -> items[index] != NULL) {
+                entry = ht -> items[index];
+                if (strcmp(entry -> key, key1) == 0){
+                    return entry -> value;
+                }  
                 switch (index){
                 case MAXSIZE:
                     index = 0;
@@ -92,10 +96,6 @@ int ht_search(hashtable* ht, const char* key1){
                     index++;
                     break;
                 }
-                entry = ht -> items[index];
-                if (strcmp(entry -> key, key1) == 0){
-                    return entry -> value;
-                }  
             }   
         }   
     }
